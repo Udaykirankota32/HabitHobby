@@ -1,18 +1,90 @@
-# React + Vite
+# Todo List App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + Vite task management UI built with styled-components and react-icons.
 
-Currently, two official plugins are available:
+This project currently includes:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- A sidebar navigation with folder/category buttons
+- A Home page with greeting, task input area, and active folder heading
+- A Register page with Sign Up / Sign In views and social sign-in options
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+- React 19
+- Vite 7
+- styled-components
+- react-icons
+- ESLint
 
-Note: This will impact Vite dev & build performances.
+## Getting Started
 
-## Expanding the ESLint configuration
+### 1. Install dependencies
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm install
+```
+
+### 2. Start development server
+
+```bash
+npm run dev
+```
+
+### 3. Build for production
+
+```bash
+npm run build
+```
+
+### 4. Preview production build
+
+```bash
+npm run preview
+```
+
+## Available Scripts
+
+- `npm run dev` - Starts Vite development server
+- `npm run build` - Creates production build
+- `npm run preview` - Previews the production build locally
+- `npm run lint` - Runs ESLint checks
+
+## Project Structure
+
+```text
+todo-list-app/
+	public/
+	src/
+		assets/
+		components/
+			HomePage/
+			NavBar/
+			RegisterPage/
+		App.jsx
+		main.jsx
+	index.html
+	package.json
+```
+
+## Current App Flow
+
+- `App.jsx` currently renders the Home page.
+- Home page manages the active folder state and passes it to NavBar.
+- NavBar highlights the selected folder button.
+- Register page is available as a separate component and can be rendered from `App.jsx` when needed.
+
+## Notes
+
+- Styling is handled with styled-components for component-scoped styles.
+- Icons are provided through react-icons.
+
+## Future Improvements
+
+- Add real task creation, listing, completion, and deletion logic
+- Persist tasks using local storage or an API
+- Add routing between Home and Register pages
+- Add form validation and authentication integration
+
+## Author
+
+Created as part of Maincrafts assignments.
