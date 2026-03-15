@@ -1,6 +1,6 @@
 import {useState} from "react"
 import RegisterImg from '../../assets/RegisterImage.svg'
-import {RegisterBgContainer,RegisterBoxBgContainer,RegisterImage,FormContainer,StyledForm,FormHeading,InputGroup,FormLabel,FormInput,SubmitButton,SocialOptionsList,SocialButton,SocialIcon} from './styled'
+import {RegisterBgContainer,RegisterBoxBgContainer,RegisterImage,FormContainer,StyledForm,FormHeading,InputGroup,FormLabel,FormInput,SubmitButton,SocialOptionsList,SocialButton,SocialIcon,Divider,Description,TransparentButton} from './styled'
 
 const signInOptionsList = [
   {
@@ -20,22 +20,32 @@ const signInOptionsList = [
   }
 ];
 const RegisterPage=()=>{
+    const [viewPage,setViewPage]=useState("SignUp")
     const [userDetails,setUserDetails]=useState({
+        name:'',
         email:'',
         password:'',
-        isRegistered:false,
+        
     })
+
+
 
     const onSubmitForm=(e)=>{
         e.preventDefault()
-        setUserDetails({...userDetails,isRegistered:true})
+       console.log('Form is submitted')
     }
 
-    return(
-        <RegisterBgContainer>
-        <RegisterBoxBgContainer>
-          <RegisterImage src={RegisterImg} alt="sign in"  />
-            <FormContainer>
+    const onClickCreateAccount=()=>{
+        setViewPage("SignUp");
+        
+    }
+
+    const onClickSignIn=()=>{
+        setViewPage("SignIn")
+    }
+
+    const SignInViewPage=()=>(
+        <FormContainer>
                 <StyledForm onSubmit={onSubmitForm}>
                     <FormHeading>Welcome Back</FormHeading>
                     <InputGroup>
@@ -47,13 +57,53 @@ const RegisterPage=()=>{
                         <FormInput type="password" id="password" onChange={(e)=>{setUserDetails({...userDetails,password:e.target.value})}} />
                     </InputGroup>
                     <SubmitButton type="submit">Sign In</SubmitButton>
+                    <Divider>or sign in with</Divider>
                     <SocialOptionsList>
                         {signInOptionsList.map(each=>(
                             <li key={each.id}><SocialButton><SocialIcon src={each.url} alt={each.name} /> sign in with {each.name}</SocialButton></li>
                         ))}
                     </SocialOptionsList>
+                    <Description>Don't have a account ?</Description>
+                    <TransparentButton type="button" onClick={onClickCreateAccount}>Create account</TransparentButton>
                 </StyledForm>
-            </FormContainer>
+        </FormContainer>
+    )
+
+    const SignUpViewPage=()=>(
+        <FormContainer>
+                <StyledForm onSubmit={onSubmitForm}>
+                    <FormHeading>Create Your Account</FormHeading>
+                    <InputGroup>
+                        <FormLabel htmlFor="name">Name</FormLabel>
+                        <FormInput type="text" id="name"  onClick={(e)=>{setUserDetails({...userDetails,name:e.target.value})}}/> 
+                    </InputGroup>
+                    
+                    <InputGroup>
+                        <FormLabel htmlFor="email">Email</FormLabel>
+                        <FormInput type="email" placeholder="abcd123@gmail.com" id="email" onChange={(e)=>{setUserDetails({...userDetails,email:e.target.value})}} />
+                    </InputGroup>
+                    <InputGroup>
+                        <FormLabel htmlFor="password">Password</FormLabel>
+                        <FormInput type="password" id="password" onChange={(e)=>{setUserDetails({...userDetails,password:e.target.value})}} />
+                    </InputGroup>
+                    <SubmitButton type="submit">Sign Up</SubmitButton>
+                    <Divider>or sign up with</Divider>
+                    <SocialOptionsList>
+                        {signInOptionsList.map(each=>(
+                            <li key={`signUp-$`}><SocialButton><SocialIcon src={each.url} alt={each.name} /> sign in with {each.name}</SocialButton></li>
+                        ))}
+                    </SocialOptionsList>
+                    <Description>Already have an account?</Description>
+                    <TransparentButton type="button" onClick={onClickSignIn}>Sign In</TransparentButton>
+                </StyledForm>
+        </FormContainer>
+    )
+
+    return(
+        <RegisterBgContainer>
+        <RegisterBoxBgContainer>
+          <RegisterImage src={RegisterImg} alt="Register"  />
+            {viewPage=="SignIn" ? SignInViewPage():SignUpViewPage()}
         </RegisterBoxBgContainer>
         </RegisterBgContainer>
     )
