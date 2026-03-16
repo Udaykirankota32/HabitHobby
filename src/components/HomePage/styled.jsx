@@ -41,7 +41,7 @@ export const GreetingSubtitle=styled.p`
 
 export const TaskInputContainer=styled.div`
     width:100%;
-    max-width:560px;
+    max-width:90%;
     display:flex;
     justify-content:space-between;
     align-items:center;
@@ -91,10 +91,12 @@ export const  TransparentButton=styled.button`
 
 
 export const InputContainerButtons=styled.div`
-    width:20%;
+    width:10%;
     display:flex;
+    
     align-items:center;
     gap:10px;
+
 
 `
 
@@ -108,5 +110,50 @@ export const ActiveFolderContainer=styled.div`
     align-items:center;
     gap:10px;
 
+
+`
+export const TaskArrayListItems=styled.ul`
+    width:100%;
+    max-width:90%;
+    background-color:#F7F7FB;
+    color:#4F2A8C;
+    font-size:20px;
+    font-weight:bold;
+    padding:20px;
+    border-radius:20px;
+    box-shadow: 0px 8px 24px 0px rgba(79, 42, 140, 0.40);
+    list-style-type:none;
+`
+export const TaskLists=styled.li`
+    margin-left:20px;
+    width:100%;
+    
+
+`
+export const TaskListBoxContainer=styled.div`
+    width:100%;
+    padding:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+`
+export const TaskListContainer=styled.div`
+    width:80%;
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+`
+
+export const TasksCheckBox=styled.input`
+    width:20px;
+    height:20px;
+    border:1px solid #4f2a8c;
+
+
+`
+export const DeleteButton=styled(TransparentButton)`
+    border:0px;
 
 `
