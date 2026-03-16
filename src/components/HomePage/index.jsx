@@ -80,9 +80,51 @@ const privateFoldersList = [
   
 ];
 
+const TaskMangerArray=[
+    {
+        id:'completed',
+        list:["To eat","To sleep"]
+    }
+]
+
 const HomePage=()=>{
     
+    const [task,setTask]=useState("");
     const [activeButton,setActiveButton]=useState(privateFoldersList[0]);
+    const [taskManagerArray,setTaskManagerArray]=useState(TaskMangerArray)
+    const activeFolderTasks =
+      taskManagerArray.find((each) => each.id === activeButton.id)?.list || [];
+
+  const onClickAddTask=()=>{
+    const trimmedTask = task.trim();
+    if (trimmedTask === "") {
+      return;
+    }
+
+    setTaskManagerArray((prevTaskManagerArray)=>{
+      const activeFolderIndex = prevTaskManagerArray.findIndex(
+        (each)=>each.id === activeButton.id
+      );
+
+      if (activeFolderIndex === -1) {
+        return [
+          ...prevTaskManagerArray,
+          {
+            id:activeButton.id,
+            list:[trimmedTask]
+          }
+        ];
+      }
+
+      return prevTaskManagerArray.map((each)=>
+        each.id === activeButton.id
+          ? {...each, list:[...each.list, trimmedTask]}
+          : each
+      );
+    });
+
+    setTask("");
+  }
         return (
             <HomeBgContainer>
                 <NavBar setActiveButton={setActiveButton} activeButton={activeButton} privateFoldersList={privateFoldersList} />
@@ -94,20 +136,25 @@ const HomePage=()=>{
                     <TaskInputContainer>
                         <InputContainerContent>
                             <PlusIcon>+</PlusIcon>
-                            <TaskInput type="text" placeholder="New Task" />
+                            <TaskInput type="text" value={task} onChange={(e)=>{setTask(e.target.value)}} placeholder="New Task" />
                         </InputContainerContent>
                         <InputContainerButtons>
-                            <TransparentButton ><MdClear size={18} /> </TransparentButton>
-                            <TransparentButton >Add</TransparentButton>
+                            <TransparentButton type="button" onClick={()=>{setTask("")}} ><MdClear size={18} /> </TransparentButton>
+                          <TransparentButton type="button" onClick={onClickAddTask} >Add</TransparentButton>
                         </InputContainerButtons>
-
-
-
                     </TaskInputContainer>
                     <ActiveFolderContainer>
                         <activeButton.icon size={30} color="#4F2A8C" />
                         <SectionHeading>{activeButton.name}</SectionHeading>
                     </ActiveFolderContainer>
+                    <ul>
+                      {activeFolderTasks.map((eachItem, index)=>(
+                        <li key={`${activeButton.id}-${index}`}>
+                                {eachItem}
+                            </li>
+                        ))}
+                    </ul>
+                    
                 </HomeContentContainer>
             </HomeBgContainer>
         )

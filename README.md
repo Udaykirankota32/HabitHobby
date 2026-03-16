@@ -1,12 +1,17 @@
-# Todo List App
+# HabitHobby - Todo List App
 
-A React + Vite task management UI built with styled-components and react-icons.
+A React and Vite based task management UI with folder-wise task grouping.
 
-This project currently includes:
+## Current Features
 
-- A sidebar navigation with folder/category buttons
-- A Home page with greeting, task input area, and active folder heading
-- A Register page with Sign Up / Sign In views and social sign-in options
+- Sidebar navigation with private folders such as Completed, Today, Work, Personal, and more.
+- Active folder selection from NavBar.
+- Home screen greeting section.
+- Task input area with Add and Clear actions.
+- Add button inserts a task into the currently active folder.
+- Clear button resets the task input.
+- Dynamic task list rendering based on selected folder.
+- Register page component with Sign Up and Sign In UI (available in codebase).
 
 ## Tech Stack
 
@@ -16,75 +21,79 @@ This project currently includes:
 - react-icons
 - ESLint
 
-## Getting Started
+## Run Locally
 
-### 1. Install dependencies
+1. Install dependencies:
 
 ```bash
 npm install
 ```
 
-### 2. Start development server
+2. Start dev server:
 
 ```bash
 npm run dev
 ```
 
-### 3. Build for production
+3. Build production bundle:
 
 ```bash
 npm run build
 ```
 
-### 4. Preview production build
+4. Preview production build:
 
 ```bash
 npm run preview
 ```
 
-## Available Scripts
+## Scripts
 
-- `npm run dev` - Starts Vite development server
-- `npm run build` - Creates production build
-- `npm run preview` - Previews the production build locally
-- `npm run lint` - Runs ESLint checks
+- npm run dev: Run development server.
+- npm run build: Create production build.
+- npm run preview: Preview production build locally.
+- npm run lint: Run ESLint checks.
 
 ## Project Structure
 
 ```text
 todo-list-app/
-	public/
-	src/
-		assets/
-		components/
-			HomePage/
-			NavBar/
-			RegisterPage/
-		App.jsx
-		main.jsx
-	index.html
-	package.json
+  public/
+  src/
+    assets/
+    components/
+      HomePage/
+      NavBar/
+      RegisterPage/
+    App.jsx
+    main.jsx
+  index.html
+  package.json
 ```
 
-## Current App Flow
+## Current App Behavior
 
-- `App.jsx` currently renders the Home page.
-- Home page manages the active folder state and passes it to NavBar.
-- NavBar highlights the selected folder button.
-- Register page is available as a separate component and can be rendered from `App.jsx` when needed.
+- App currently renders the HomePage component.
+- HomePage manages activeButton for selected folder state.
+- HomePage manages task for new task input value.
+- HomePage manages taskManagerArray for folder-wise task storage.
+- NavBar receives folder data and updates activeButton on folder click.
+- Add button inserts task into the active folder list.
+- Task list below heading shows tasks for the selected folder only.
 
 ## Notes
 
-- Styling is handled with styled-components for component-scoped styles.
-- Icons are provided through react-icons.
+- Styling is done using styled-components.
+- Icons are rendered using react-icons.
+- Data is currently in-memory only and resets on page refresh.
 
-## Future Improvements
+## Planned Improvements
 
-- Add real task creation, listing, completion, and deletion logic
-- Persist tasks using local storage or an API
-- Add routing between Home and Register pages
-- Add form validation and authentication integration
+- Add delete and complete task actions.
+- Persist tasks using local storage or backend API.
+- Add React Router for Register and Home navigation.
+- Add input validation and better empty-state messaging.
 
 ## Author
 
-Created as part of Maincrafts assignments.
+Created as part of Maincrafts assignment practice.
