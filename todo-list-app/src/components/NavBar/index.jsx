@@ -15,7 +15,14 @@ import {
 } from "./styled";
 
 const NavBar = (props) => {
-  const { activeButton, setActiveButton, privateFoldersList } = props;
+  const { activeButton, setActiveButton, privateFoldersList, taskManagerArray } = props;
+
+  const getFolderTaskCount = (folderId) => {
+    const matchedFolder = taskManagerArray.find(
+      (eachItem) => (eachItem.folderName || eachItem.id) === folderId,
+    );
+    return matchedFolder?.list?.length || 0;
+  };
 
   return (
     <nav>
@@ -44,7 +51,7 @@ const NavBar = (props) => {
                       <RxDragHandleDots2 color="#b5b2b2" size={20} />
                       <folder.icon
                         color={
-                          folder.name === activeButton.name
+                          folder.id === activeButton.id
                             ? "#ffffff"
                             : "#4F2A8C"
                         }
@@ -52,7 +59,7 @@ const NavBar = (props) => {
                       />
                       <span>{folder.name}</span>
                     </ButtonContent>
-                    <CounterText>0</CounterText>
+                    <CounterText>{getFolderTaskCount(folder.id)}</CounterText>
                   </ButtonAlignment>
                 </FolderButton>
               </li>

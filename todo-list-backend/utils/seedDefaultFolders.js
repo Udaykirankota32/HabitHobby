@@ -1,25 +1,28 @@
 import TaskManager from "../models/TaskManager.js"
+import mongoose from "mongoose"
 
 const defaultFolders = [
-  { id: "completed" },
-  { id: "today" },
-  { id: "work" },
-  { id: "personal" },
-  { id: "important" },
-  { id: "shopping" },
-  { id: "study" },
-  { id: "health" },
-  { id: "finance" },
-  { id: "travel" },
+  "today",
+  "work",
+  "personal",
+  "important",
+  "shopping",
+  "study",
+  "health",
+  "finance",
+  "travel",
 ]
 
 const seedDefaultFolders = async () => {
-  const operations = defaultFolders.map((folder) => ({
+  const folderKey = TaskManager.schema.path("folderName") ? "folderName" : "id"
+
+  const operations = defaultFolders.map((folderValue) => ({
     updateOne: {
-      filter: { id: folder.id },
+      filter: { [folderKey]: folderValue },
       update: {
         $setOnInsert: {
-          id: folder.id,
+          _id: new mongoose.Types.ObjectId(),
+          [folderKey]: folderValue,
           list: [],
         },
       },

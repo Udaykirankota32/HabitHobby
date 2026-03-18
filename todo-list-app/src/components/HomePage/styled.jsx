@@ -45,7 +45,7 @@ export const TaskInputContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  padding: 12px 14px;
+  padding: 12px 20px;
   background-color: #ffffff;
   border: 1px solid #d9dce3;
   border-radius: 10px;
@@ -109,7 +109,7 @@ export const TaskArrayListItems = styled.ul`
   max-width: 90%;
   background-color: #f7f7fb;
   color: #4f2a8c;
-  font-size: 20px;
+  font-size: 17px;
   font-weight: bold;
   padding: 20px;
   border-radius: 20px;

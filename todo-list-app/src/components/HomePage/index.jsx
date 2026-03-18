@@ -39,11 +39,7 @@ import {
 } from "./styled";
 
 const privateFoldersList = [
-  {
-    id: "completed",
-    name: "Completed",
-    icon: MdCheckCircle,
-  },
+ 
   {
     id: "today",
     name: "Today",
@@ -94,10 +90,7 @@ const privateFoldersList = [
 const TaskMangerArray = [
   {
     id: "completed",
-    list: [
-      { task: "To Eat", isDone: true },
-      { task: "To sleep", isDone: true },
-    ],
+    list: [],
   },
 ];
 
@@ -105,15 +98,26 @@ const HomePage = () => {
   const [inputTask, setInputTask] = useState("");
   const [activeButton, setActiveButton] = useState(privateFoldersList[0]);
   const [taskManagerArray, setTaskManagerArray] = useState(TaskMangerArray);
+  const getFolderKey = (folder) => folder.folderName || folder.id;
 
 
-  useEffect(()=>{
+  useEffect(()=>{ //**** */
     const fetchData=async()=>{
       try{
         const response = await fetch(`http://localhost:5000/api/todos/${activeButton.id}/`)
         if(response.ok){
           const data=await response.json()
-          setTaskManagerArray([data])
+          setTaskManagerArray((prevArray) => {
+            const folderExists = prevArray.some(
+              (eachFolder) => getFolderKey(eachFolder) === getFolderKey(data),
+            );
+            if (folderExists) {
+              return prevArray.map((eachFolder) =>
+                getFolderKey(eachFolder) === getFolderKey(data) ? data : eachFolder,
+              );
+            }
+            return [...prevArray, data];
+          })
         }
       }
       catch(error){
@@ -123,22 +127,26 @@ const HomePage = () => {
     fetchData()
   }, [activeButton.id])
   
-
+//**** */
   
   const activeFolderTasks =
-    taskManagerArray.find((each) => each.id === activeButton.id)?.list || [];
+    taskManagerArray.find((each) => getFolderKey(each) === activeButton.id)?.list || [];
 
-  const onToggleTaskStatus = (taskIndex) => {
+  const onToggleTaskStatus = (taskId, taskIndex) => {
     setTaskManagerArray((prevArray) =>
       prevArray.map((eachFolder) => {
-        if (eachFolder.id !== activeButton.id) {
+        if (getFolderKey(eachFolder) !== activeButton.id) {
           return eachFolder;
         }
 
         return {
           ...eachFolder,
           list: eachFolder.list.map((eachTask, index) =>
-            index === taskIndex
+            eachTask.taskId
+              ? eachTask.taskId === taskId
+                ? { ...eachTask, isDone: !eachTask.isDone }
+                : eachTask
+              : index === taskIndex
               ? { ...eachTask, isDone: !eachTask.isDone }
               : eachTask,
           ),
@@ -147,51 +155,40 @@ const HomePage = () => {
     );
   };
 
-  const onClickDeleteTask = (task) => {
-    setTaskManagerArray((prevArray) =>
-      prevArray.map((eachFolder) => {
-        if (eachFolder.id !== activeButton.id) {
-          return eachFolder;
+  
+
+
+  const onClickDeleteTask=async(taskId)=>{
+      const options={
+        method:"DELETE",
+        headers:{
+        "Content-Type":"application/json",
         }
+      }
 
-        return {
-          ...eachFolder,
-          list: eachFolder.list.filter((eachTask) => eachTask.task !== task),
-        };
-      }),
-    );
-  };
+      try{
+          const response =await fetch(`http://localhost:5000/api/todos/${activeButton.id}/tasks/${taskId}`,options);
+          if(response.ok){
+            const data=await response.json();
+            setTaskManagerArray((prevArray) => {
+              const folderExists = prevArray.some(
+                (eachFolder) => getFolderKey(eachFolder) === getFolderKey(data),
+              );
+              if (folderExists) {
+                return prevArray.map((eachFolder) =>
+                  getFolderKey(eachFolder) === getFolderKey(data) ? data : eachFolder,
+                );
+              }
+              return [...prevArray, data];
+            })
+          }
+      }
+      catch(error){
+          console.log(error)
+      }
+  }
 
-  const TaskListView = () => (
-    <TaskArrayListItems>
-      {activeFolderTasks.map((eachItem, index) => (
-        <TaskLists key={`${activeButton.id}-${index}`}>
-          <TaskListBoxContainer>
-            <TaskListContainer>
-              <TasksCheckBox
-                type="checkbox"
-                id={`${activeButton.id}-${index}`}
-                checked={eachItem.isDone}
-                onChange={() => onToggleTaskStatus(index)}
-              />
-              <TaskContent
-                htmlFor={`${activeButton.id}-${index}`}
-                $isDone={eachItem.isDone}
-              >
-                {eachItem.task}
-              </TaskContent>
-            </TaskListContainer>
-            <DeleteButton
-              type="button"
-              onClick={() => onClickDeleteTask(eachItem.task)}
-            >
-              <MdDelete size={25} color="#4F2A8C" />
-            </DeleteButton>
-          </TaskListBoxContainer>
-        </TaskLists>
-      ))}
-    </TaskArrayListItems>
-  );
+
 
   const onClickAddTask=async()=>{
     if(!inputTask.trim()) return ;
@@ -212,7 +209,17 @@ const HomePage = () => {
       const response =await fetch(`http://localhost:5000/api/todos/${activeButton.id}/tasks`,options);
       if(response.ok){
         const data=await response.json();
-        setTaskManagerArray([data]);
+        setTaskManagerArray((prevArray) => {
+          const folderExists = prevArray.some(
+            (eachFolder) => getFolderKey(eachFolder) === getFolderKey(data),
+          );
+          if (folderExists) {
+            return prevArray.map((eachFolder) =>
+              getFolderKey(eachFolder) === getFolderKey(data) ? data : eachFolder,
+            );
+          }
+          return [...prevArray, data];
+        });
         setInputTask("")
       }
     }
@@ -226,12 +233,47 @@ const HomePage = () => {
 
   }
 
+
+  const TaskListView = () => (
+    <TaskArrayListItems>
+      {activeFolderTasks.map((eachItem, index) => (
+        <TaskLists key={eachItem.taskId || eachItem._id || `${activeButton.id}-${index}`}>
+          <TaskListBoxContainer>
+            <TaskListContainer>
+              <TasksCheckBox
+                type="checkbox"
+                id={eachItem.taskId || eachItem._id || `${activeButton.id}-${index}`}
+                checked={eachItem.isDone}
+                onChange={() => onToggleTaskStatus(eachItem.taskId, index)}
+              />
+              <TaskContent
+                htmlFor={eachItem.taskId || eachItem._id || `${activeButton.id}-${index}`}
+                $isDone={eachItem.isDone}
+              >
+                {eachItem.task}
+              </TaskContent>
+            </TaskListContainer>
+            <DeleteButton
+              type="button"
+              onClick={() => onClickDeleteTask(eachItem.taskId || eachItem._id)}
+            >
+              <MdDelete size={25} color="#4F2A8C" />
+            </DeleteButton>
+          </TaskListBoxContainer>
+        </TaskLists>
+      ))}
+    </TaskArrayListItems>
+  );
+
+  
+
   return (
     <HomeBgContainer>
       <NavBar
         setActiveButton={setActiveButton}
         activeButton={activeButton}
         privateFoldersList={privateFoldersList}
+        taskManagerArray={taskManagerArray}
       />
       <HomeContentContainer>
         <GreetingContainer>

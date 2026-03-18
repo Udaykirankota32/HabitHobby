@@ -8,6 +8,11 @@ const todoSchema=new mongoose.Schema({
     },
     list:[
         {
+            taskId:{
+                type:String,
+                required:true,
+                default: () => new mongoose.Types.ObjectId().toString(),
+            },
             task:{
                 type:String,
                 required:true,
