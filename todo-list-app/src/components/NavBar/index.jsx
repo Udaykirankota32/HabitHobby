@@ -34,7 +34,7 @@ const NavBar = (props) => {
               <li key={folder.id}>
                 <FolderButton
                   type="button"
-                  isActive={folder.name === activeButton.name}
+                  $isActive={folder.id === activeButton.id}
                   onClick={() => {
                     setActiveButton({ ...folder });
                   }}

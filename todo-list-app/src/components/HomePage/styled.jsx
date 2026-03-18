@@ -143,7 +143,6 @@ export const DeleteButton = styled(TransparentButton)`
   border: 0px;
 `;
 
-export const TaskContent=styled.label`
-    text-decoration:${(props)=>props.isDone && "line-through"};
-
-`
+export const TaskContent = styled.label`
+  text-decoration: ${(props) => (props.$isDone ? "line-through" : "none")};
+`;

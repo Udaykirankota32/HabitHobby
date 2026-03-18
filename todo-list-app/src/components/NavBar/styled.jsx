@@ -47,8 +47,8 @@ export const FoldersListItems = styled.ul`
 `;
 
 export const FolderButton = styled.button`
-  background-color: ${(props) => (props.isActive ? "#4F28AC" : "transparent")};
-  color: ${(props) => (props.isActive ? "#ffffff" : "#2f3747")};
+  background-color: ${(props) => (props.$isActive ? "#4F28AC" : "transparent")};
+  color: ${(props) => (props.$isActive ? "#ffffff" : "#2f3747")};
   font-size: 14px;
   font-weight: 600;
   width: 100%;

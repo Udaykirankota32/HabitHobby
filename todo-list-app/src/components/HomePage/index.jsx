@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import {
   MdToday,
   MdWork,
@@ -34,7 +34,8 @@ import {
   TaskListBoxContainer,
   TaskListContainer,
   TasksCheckBox,
-  DeleteButton,TaskContent
+  DeleteButton,
+  TaskContent,
 } from "./styled";
 
 const privateFoldersList = [
@@ -101,17 +102,31 @@ const TaskMangerArray = [
 ];
 
 const HomePage = () => {
-  const [task, setTask] = useState("");
+  const [inputTask, setInputTask] = useState("");
   const [activeButton, setActiveButton] = useState(privateFoldersList[0]);
   const [taskManagerArray, setTaskManagerArray] = useState(TaskMangerArray);
+
+
+  useEffect(()=>{
+    const fetchData=async()=>{
+      try{
+        const response = await fetch(`http://localhost:5000/api/todos/${activeButton.id}/`)
+        if(response.ok){
+          const data=await response.json()
+          setTaskManagerArray([data])
+        }
+      }
+      catch(error){
+        console.log(error);
+      }
+    }
+    fetchData()
+  }, [activeButton.id])
+  
+
+  
   const activeFolderTasks =
     taskManagerArray.find((each) => each.id === activeButton.id)?.list || [];
-
-
-  
-  
-
-
 
   const onToggleTaskStatus = (taskIndex) => {
     setTaskManagerArray((prevArray) =>
@@ -159,7 +174,10 @@ const HomePage = () => {
                 checked={eachItem.isDone}
                 onChange={() => onToggleTaskStatus(index)}
               />
-              <TaskContent htmlFor={`${activeButton.id}-${index}`} isDone={eachItem.isDone}>
+              <TaskContent
+                htmlFor={`${activeButton.id}-${index}`}
+                $isDone={eachItem.isDone}
+              >
                 {eachItem.task}
               </TaskContent>
             </TaskListContainer>
@@ -175,39 +193,39 @@ const HomePage = () => {
     </TaskArrayListItems>
   );
 
-  const onClickAddTask = () => {
-    const trimmedTask = task.trim();
-    if (trimmedTask === "") {
-      return;
+  const onClickAddTask=async()=>{
+    if(!inputTask.trim()) return ;
+
+    const Body={
+        task:inputTask.trim(),
+        isDone:false,
+      }
+    
+    const options={
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+      },
+      body:JSON.stringify(Body)
+    }
+    try{
+      const response =await fetch(`http://localhost:5000/api/todos/${activeButton.id}/tasks`,options);
+      if(response.ok){
+        const data=await response.json();
+        setTaskManagerArray([data]);
+        setInputTask("")
+      }
     }
 
-    setTaskManagerArray((prevTaskManagerArray) => {
-      const activeFolderIndex = prevTaskManagerArray.findIndex(
-        (each) => each.id === activeButton.id,
-      );
+    catch(error){
+      console.log(error)
 
-      if (activeFolderIndex === -1) {
-        return [
-          ...prevTaskManagerArray,
-          {
-            id: activeButton.id,
-            list: [{ task: trimmedTask, isDone: false }],
-          },
-        ];
-      }
+    }
 
-      return prevTaskManagerArray.map((each) =>
-        each.id === activeButton.id
-          ? {
-              ...each,
-              list: [...each.list, { task: trimmedTask, isDone: false }],
-            }
-          : each,
-      );
-    });
+    
 
-    setTask("");
-  };
+  }
+
   return (
     <HomeBgContainer>
       <NavBar
@@ -225,9 +243,9 @@ const HomePage = () => {
             <PlusIcon>+</PlusIcon>
             <TaskInput
               type="text"
-              value={task}
+              value={inputTask}
               onChange={(e) => {
-                setTask(e.target.value);
+                setInputTask(e.target.value);
               }}
               placeholder="New Task"
             />
@@ -236,7 +254,7 @@ const HomePage = () => {
             <TransparentButton
               type="button"
               onClick={() => {
-                setTask("");
+                setInputTask("");
               }}
             >
               <MdClear size={18} />{" "}
