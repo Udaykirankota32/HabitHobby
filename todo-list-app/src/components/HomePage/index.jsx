@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState,useEffect,useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   MdToday,
@@ -101,8 +101,16 @@ const HomePage = () => {
   const [activeButton, setActiveButton] = useState(privateFoldersList[0]);
   const [taskManagerArray, setTaskManagerArray] = useState(TaskMangerArray);
   const [userName] = useState(localStorage.getItem("user_name") || "User");
+  const [errorMessage, setErrorMessage] = useState("");
   const getFolderKey = (folder) => folder.folderName || folder.id;
   const token = localStorage.getItem("jwt_token");
+
+  const clearSessionAndRedirect = useCallback(() => {
+    localStorage.removeItem("jwt_token");
+    localStorage.removeItem("user_name");
+    localStorage.removeItem("user_email");
+    navigate("/register");
+  }, [navigate])
 
 
   useEffect(()=>{ //**** */
@@ -120,10 +128,7 @@ const HomePage = () => {
         })
 
         if (response.status === 401) {
-          localStorage.removeItem("jwt_token");
-          localStorage.removeItem("user_name");
-          localStorage.removeItem("user_email");
-          navigate("/register");
+          clearSessionAndRedirect();
           return;
         }
 
@@ -143,11 +148,12 @@ const HomePage = () => {
         }
       }
       catch(error){
+        setErrorMessage("Failed to fetch tasks. Please try again.")
         console.log(error);
       }
     }
     fetchData()
-  }, [activeButton.id, navigate, token])
+  }, [activeButton.id, clearSessionAndRedirect, navigate, token])
   
 //**** */
   
@@ -204,9 +210,16 @@ const HomePage = () => {
               }
               return [...prevArray, data];
             })
+            setErrorMessage("")
+          } else if (response.status === 401) {
+            clearSessionAndRedirect()
+          } else {
+            const errorData = await response.json().catch(() => ({}))
+            setErrorMessage(errorData.message || "Failed to delete task")
           }
       }
       catch(error){
+          setErrorMessage("Failed to delete task. Please try again.")
           console.log(error)
       }
   }
@@ -245,10 +258,17 @@ const HomePage = () => {
           return [...prevArray, data];
         });
         setInputTask("")
+        setErrorMessage("")
+      } else if (response.status === 401) {
+        clearSessionAndRedirect()
+      } else {
+        const errorData = await response.json().catch(() => ({}))
+        setErrorMessage(errorData.message || "Unable to add task")
       }
     }
 
     catch(error){
+      setErrorMessage("Unable to connect to backend.")
       console.log(error)
 
     }
@@ -331,6 +351,7 @@ const HomePage = () => {
             </TransparentButton>
           </InputContainerButtons>
         </TaskInputContainer>
+        {errorMessage ? <GreetingSubtitle>{errorMessage}</GreetingSubtitle> : null}
         <ActiveFolderContainer>
           <activeButton.icon size={30} color="#4F2A8C" />
           <SectionHeading>{activeButton.name}</SectionHeading>

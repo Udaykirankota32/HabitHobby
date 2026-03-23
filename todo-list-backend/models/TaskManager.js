@@ -56,16 +56,24 @@ const todoSchema=new mongoose.Schema({
     }
 })
 
-todoSchema.index({ "userDetails.userId": 1, folderName: 1 }, { unique: true })
+todoSchema.index(
+    { "userDetails.userId": 1, folderName: 1 },
+    {
+        unique: true,
+        partialFilterExpression: {
+            "userDetails.userId": { $type: "string" },
+            folderName: { $type: "string" },
+        },
+    },
+)
 todoSchema.index({ "userDetails.email": 1 })
 
-todoSchema.pre("save", async function hashPassword(next) {
+todoSchema.pre("save", async function hashPassword() {
     if (!this.isModified("userDetails.password")) {
-        return next()
+        return
     }
 
     this.userDetails.password = await bcrypt.hash(this.userDetails.password, 10)
-    next()
 })
 
 todoSchema.methods.comparePassword = function comparePassword(password) {
