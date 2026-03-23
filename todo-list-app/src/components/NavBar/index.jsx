@@ -15,7 +15,7 @@ import {
 } from "./styled";
 
 const NavBar = (props) => {
-  const { activeButton, setActiveButton, privateFoldersList, taskManagerArray } = props;
+  const { activeButton, setActiveButton, privateFoldersList, taskManagerArray, userName } = props;
 
   const getFolderTaskCount = (folderId) => {
     const matchedFolder = taskManagerArray.find(
@@ -31,7 +31,7 @@ const NavBar = (props) => {
           <img src={LogoImg} width={120} />
           <div>
             <AppName>Habbit Hobby</AppName>
-            <UserName>Williams Shakespear</UserName>
+            <UserName>{userName}</UserName>
           </div>
         </NavbarAccountContainer>
         <div>

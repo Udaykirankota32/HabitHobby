@@ -4,7 +4,6 @@ import dotenv from "dotenv"
 import cors from "cors"
 import connectdb from "./config/db.js"
 import todoRoutes from "./routes/todoRoutes.js"
-import seedDefaultFolders from "./utils/seedDefaultFolders.js"
 
 const app=express()
 
@@ -27,7 +26,6 @@ const Port=process.env.PORT || 5000
 const startServer = async () => {
     try {
         await connectdb();
-        await seedDefaultFolders();
         app.listen(Port,()=>{
             console.log("server is connected")
         })

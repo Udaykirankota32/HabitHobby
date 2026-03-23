@@ -1,16 +1,20 @@
 import express from "express"
 
-import {addTask,getTasks,deleteTask} from "../controllers/todoController.js"
+import { addTask, getTasks, deleteTask, registerUser, loginUser } from "../controllers/todoController.js"
+import authMiddleware from "../middleware/authMiddleware.js"
 
-const router=express.Router()
+const router = express.Router()
 
-router.get("/:folderId/",getTasks)
+router.post("/register", registerUser)
+router.post("/login", loginUser)
 
-router.post("/:folderId/tasks",addTask);
+router.get("/:folderId/", authMiddleware, getTasks)
 
-router.delete("/:folderId/tasks/:taskId",deleteTask)
+router.post("/:folderId/tasks", authMiddleware, addTask)
+
+router.delete("/:folderId/tasks/:taskId", authMiddleware, deleteTask)
 
 
 
 
-export  default router
+export default router

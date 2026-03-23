@@ -1,5 +1,6 @@
 import TaskManager from "../models/TaskManager.js"
 import mongoose from "mongoose"
+import bcrypt from "bcryptjs"
 
 const defaultFolders = [
   "today",
@@ -13,16 +14,22 @@ const defaultFolders = [
   "travel",
 ]
 
-const seedDefaultFolders = async () => {
-  const folderKey = TaskManager.schema.path("folderName") ? "folderName" : "id"
+const seedDefaultFolders = async ({ userId, userName, email, password }) => {
+  const hashedPassword = await bcrypt.hash(password, 10)
 
   const operations = defaultFolders.map((folderValue) => ({
     updateOne: {
-      filter: { [folderKey]: folderValue },
+      filter: { "userDetails.userId": userId, folderName: folderValue },
       update: {
         $setOnInsert: {
           _id: new mongoose.Types.ObjectId(),
-          [folderKey]: folderValue,
+          userDetails: {
+            userId,
+            userName,
+            email,
+            password: hashedPassword,
+          },
+          folderName: folderValue,
           list: [],
         },
       },

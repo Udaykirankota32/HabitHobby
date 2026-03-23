@@ -1,4 +1,5 @@
 import { useState,useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   MdToday,
   MdWork,
@@ -95,16 +96,37 @@ const TaskMangerArray = [
 ];
 
 const HomePage = () => {
+  const navigate = useNavigate();
   const [inputTask, setInputTask] = useState("");
   const [activeButton, setActiveButton] = useState(privateFoldersList[0]);
   const [taskManagerArray, setTaskManagerArray] = useState(TaskMangerArray);
+  const [userName] = useState(localStorage.getItem("user_name") || "User");
   const getFolderKey = (folder) => folder.folderName || folder.id;
+  const token = localStorage.getItem("jwt_token");
 
 
   useEffect(()=>{ //**** */
+    if (!token) {
+      navigate("/register");
+      return;
+    }
+
     const fetchData=async()=>{
       try{
-        const response = await fetch(`http://localhost:5000/api/todos/${activeButton.id}/`)
+        const response = await fetch(`http://localhost:5000/api/todos/${activeButton.id}/`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
+        if (response.status === 401) {
+          localStorage.removeItem("jwt_token");
+          localStorage.removeItem("user_name");
+          localStorage.removeItem("user_email");
+          navigate("/register");
+          return;
+        }
+
         if(response.ok){
           const data=await response.json()
           setTaskManagerArray((prevArray) => {
@@ -125,7 +147,7 @@ const HomePage = () => {
       }
     }
     fetchData()
-  }, [activeButton.id])
+  }, [activeButton.id, navigate, token])
   
 //**** */
   
@@ -163,6 +185,7 @@ const HomePage = () => {
         method:"DELETE",
         headers:{
         "Content-Type":"application/json",
+        Authorization: `Bearer ${token}`,
         }
       }
 
@@ -202,6 +225,7 @@ const HomePage = () => {
       method:"POST",
       headers:{
         "Content-Type":"application/json",
+        Authorization: `Bearer ${token}`,
       },
       body:JSON.stringify(Body)
     }
@@ -274,10 +298,11 @@ const HomePage = () => {
         activeButton={activeButton}
         privateFoldersList={privateFoldersList}
         taskManagerArray={taskManagerArray}
+        userName={userName}
       />
       <HomeContentContainer>
         <GreetingContainer>
-          <GreetingTitle>Hello Williams</GreetingTitle>
+          <GreetingTitle>Hello {userName}</GreetingTitle>
           <GreetingSubtitle>its Sunday</GreetingSubtitle>
         </GreetingContainer>
         <TaskInputContainer>
